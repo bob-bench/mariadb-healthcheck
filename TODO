@@ -4,5 +4,4 @@
 ** Add a query timeout
 
 * Robustness:
-** Use context.Context to allow canceling
 ** Add/test timeout handling
