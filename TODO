@@ -1,0 +1,8 @@
+* Config:
+** Make username/pass/port/db configurable
+** Make http port configurable
+** Add a query timeout
+
+* Robustness:
+** Use context.Context to allow canceling
+** Add/test timeout handling
