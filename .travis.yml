@@ -1,0 +1,11 @@
+language: go
+
+go:
+  - 1.8
+  - master
+
+script:
+  - go build
+
+branches:
+  only: master
