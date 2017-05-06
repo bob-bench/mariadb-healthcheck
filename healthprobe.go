@@ -15,7 +15,7 @@ import "context"
 // Connect to MariaDB Galera and check if this specific node is
 // considered ready and accepting writes
 func checkMysql(ctx context.Context, user string, password string, host string, port int) (int, string) {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/", user, password, host, port)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/?readTimeout=400ms&writeTimeout=400ms", user, password, host, port)
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		fmt.Print(err, "\n")
