@@ -11,6 +11,7 @@ import "net/http"
 import "time"
 import "log"
 import "context"
+import "flag"
 
 // Connect to MariaDB Galera and check if this specific node is
 // considered ready and accepting writes
@@ -48,6 +49,13 @@ func checkMysql(ctx context.Context, user string, password string, host string, 
 }
 
 func main() {
+	var listAddr = flag.String("listen-address", ":8080", "Where to listen for HTTP")
+	var mysqlUsr = flag.String("mysql-user", "user", "Username for MySQL")
+	var mysqlPsd = flag.String("mysql-pass", "pass", "Password for MySQL")
+	var mysqlHst = flag.String("mysql-host", "localhost", "Hostname for MySQL")
+	var mysqlPrt = flag.Int("mysql-port", 3306, "Port for MySQL")
+	flag.Parse()
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/selfcheck", func(w http.ResponseWriter, req *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
@@ -57,14 +65,14 @@ func main() {
 	mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
 		ctx := req.Context()
 		ctx, cancel := context.WithTimeout(ctx, 1 * time.Second)
-		code, reason := checkMysql(ctx, "user", "pass", "localhost", 3306)
+		code, reason := checkMysql(ctx, *mysqlUsr, *mysqlPsd, *mysqlHst, *mysqlPrt)
 		cancel()
 		w.WriteHeader(code)
 		w.Write([]byte(reason))
 	})
 
 	s := &http.Server{
-		Addr:           ":8080",
+		Addr:           *listAddr,
 		Handler:        mux,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
